@@ -20,15 +20,15 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await loginUser(formData);
-      localStorage.setItem('token', response.access); // Guarda el token en localStorage
-      localStorage.setItem('username', formData.username); // Guarda el nombre de usuario en localStorage
+      sessionStorage.setItem('token', response.access); // Guarda el token en sessionStorage
+      sessionStorage.setItem('username', formData.username); // Guarda el nombre de usuario en sessionStorage
       setMessage('Login successful!');
-      navigate('/'); // Redirige a la página de Home
+      navigate('/');
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     }
   };
-
+  
   return (
     <div>
       <h2>Login</h2>

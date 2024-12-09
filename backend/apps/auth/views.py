@@ -36,4 +36,3 @@ class CustomLogoutView(View):
     def post(self, request):
         logout(request)  # Cierra la sesión del usuario
         return JsonResponse({'message': 'Logged out successfully'}, status=200)
-    

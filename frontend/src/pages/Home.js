@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Agregar useNavigate para redirigir
+import { Link, useNavigate } from 'react-router-dom'; // Agregar useNavigate para redirección
+import { jwtDecode } from 'jwt-decode';  // Corregir la importación
 import '../styles/home.css';
 
 const Home = () => {
@@ -7,20 +8,28 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Si hay un token en el localStorage, mostramos el nombre de usuario
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
+    
     if (token) {
-      // Aquí deberías tener algún método para obtener el nombre del usuario (si lo guardaste en el backend).
-      // Para el ejemplo, asumimos que el nombre de usuario está almacenado en el localStorage.
-      const user = localStorage.getItem('username'); // O usa algún otro método para obtener el nombre de usuario
-      setUsername(user);
+      // Verificar si el token ha caducado
+      const decoded = jwtDecode(token); // Usar jwtDecode en lugar de jwt_decode
+      const currentTime = Date.now() / 1000; // Hora actual en segundos
+
+      if (decoded.exp < currentTime) {
+        // Si el token ha caducado
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        navigate('/login'); // Redirigir a login si el token ha caducado
+      } else {
+        // Si el token es válido, se muestra el nombre de usuario
+        setUsername(sessionStorage.getItem('username'));
+      }
     }
-  }, []);
+  }, [navigate]);
 
   const handleLogout = () => {
-    // Eliminar el token y el nombre de usuario del localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
+    sessionStorage.removeItem('token'); // Eliminar el token
+    sessionStorage.removeItem('username'); // Eliminar el nombre de usuario
     setUsername('');
     navigate('/login'); // Redirigir al login
   };
